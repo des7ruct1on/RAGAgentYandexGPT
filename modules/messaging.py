@@ -57,7 +57,6 @@ class KafkaMessaging:
         if err is not None:
             logger.error(f"Message delivery failed: {err}")
         else:
-            # Логируем содержимое сообщения
             logger.debug(f"Message delivered to {msg.topic()} [{msg.partition()}]")
             logger.debug(f"Message key: {msg.key().decode('utf-8')}")
             logger.debug(f"Message value: {msg.value().decode('utf-8')}")
