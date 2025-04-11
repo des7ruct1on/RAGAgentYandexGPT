@@ -50,13 +50,10 @@ class Agent:
     def generate_response(self, query: str, temperature: float = 0.7) -> str:
         """Генерация ответа с RAG"""
         try:
-            # 1. Векторный поиск релевантных чанков
             context_chunks = self.vector_db.query(query)
 
-            # 2. Формирование промпта
             prompt = self._build_prompt(query, [chunk for chunk, _ in context_chunks])
 
-            # 3. Генерация ответа
             response = self.model.run(prompt).text
 
             return self._postprocess_response(response, query)
@@ -100,18 +97,14 @@ class Agent:
         - Проверка релевантности ответа
         - Форматирование
         """
-        # Очистка текста
         response = ' '.join(response.split()).strip()
 
-        # Проверка на пустой ответ
         if not response:
             return "Не удалось сформировать ответ. Попробуйте переформулировать вопрос."
 
-        # Проверка на отсутствие информации в контексте
         if "не могу дать точный ответ" in response.lower():
             return "К сожалению, в моей базе знаний нет информации по этому вопросу."
 
-        # Удаление повторяющихся фраз
         sentences = [s.strip() for s in response.split('.') if s.strip()]
         unique_sentences = []
         seen = set()
